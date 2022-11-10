@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioHandler))]
 public class PlayerAnimatorHandler : MonoBehaviour
 {
     private static string MoveHash = "Move";
 
+    private AudioHandler audioHandler;
+
     public CharacterController characterController;
+
     public Animator animator;
     private AnimatorState _currentState;
     public AnimatorState animatorState
@@ -19,13 +23,9 @@ public class PlayerAnimatorHandler : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    private void Update()
+    void Start()
     {
-        if (characterController.velocity.magnitude > 1)
-            animatorState = AnimatorState.run;
-        else
-            animatorState = AnimatorState.idle;
+        audioHandler = GetComponent<AudioHandler>();
     }
 
     private void ChangeState(AnimatorState state)
@@ -33,14 +33,21 @@ public class PlayerAnimatorHandler : MonoBehaviour
         switch (state)
         {
             case AnimatorState.idle:
-                animator.SetFloat(MoveHash, 0, .1f, Time.deltaTime);
+                animator.SetBool(MoveHash, false);
+                Debug.Log("Idle");
                 break;
             case AnimatorState.run:
-                animator.SetFloat(MoveHash, characterController.velocity.magnitude, .1f, Time.deltaTime);
+                animator.SetBool(MoveHash, true);
+                Debug.Log(MoveHash);
                 break;
             default:
                 break;
         }
+    }
+
+    public void StepEvent()
+    {
+        audioHandler.PlaySound();
     }
 }
 

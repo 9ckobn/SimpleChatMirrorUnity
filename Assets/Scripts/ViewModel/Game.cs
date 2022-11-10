@@ -6,13 +6,19 @@ public class Game
 
     public Game()
     {
+#if PLATFORM_STANDALONE
         RegisterInputservice();
+        RegisterInputKeys();
+#endif
     }
 
     private static void RegisterInputservice()
     {
-#if PLATFORM_STANDALONE
         InputService = new DesktopInputService();
-#endif
+    }
+
+    private static void RegisterInputKeys()
+    {
+        GameSettings.activeKeyCode.Add(GameSettings.LeftMouseButton, true);
     }
 }

@@ -6,7 +6,7 @@ public class Bootstrapper : MonoBehaviour
 {
     Game _game;
 
-    void Awake()
+    void Start()
     {
         _game = new Game();
 

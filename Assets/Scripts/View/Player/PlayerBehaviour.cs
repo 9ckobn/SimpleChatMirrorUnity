@@ -1,51 +1,41 @@
 using UnityEngine;
+using Mirror;
 
-[RequireComponent(typeof(CharacterController))]
-public class PlayerBehaviour : MonoBehaviour
+[RequireComponent(typeof(CharacterController), typeof(Animator), typeof(PlayerAnimatorHandler))]
+public class PlayerBehaviour : NetworkBehaviour
 {
-    private IInputSevice _inputSrevice;
+    public float _speed;
+    protected IInputSevice _inputSrevice;
 
-    private CharacterController _characterController;
-    [SerializeField] private float _speed;
-    [SerializeField] private Animator animator;
+    protected CharacterController _characterController;
+    private Animator animator;
 
-    public PlayerAnimatorHandler AnimatorHandler;
+    protected PlayerAnimatorHandler AnimatorHandler;
 
-    private Camera camera;
+    [SerializeField] private Cinemachine.CinemachineFreeLook Camera;
 
-    void Awake()
+    public override void OnStartClient()
     {
+        base.OnStartClient();
+
+        Debug.Log("Entered");
+
         _inputSrevice = Game.InputService;
         _characterController = GetComponent<CharacterController>();
+
+        animator = GetComponent<Animator>();
         InitializeAnimator();
 
-        camera = Camera.main;
+        if(!isLocalPlayer)
+            Destroy(Camera.gameObject);
     }
+
 
     public void InitializeAnimator()
     {
-         AnimatorHandler = gameObject.AddComponent<PlayerAnimatorHandler>();
+        AnimatorHandler = GetComponent<PlayerAnimatorHandler>();
 
-         AnimatorHandler.animator = animator;
-         AnimatorHandler.characterController = _characterController;
-    }
-
-    void FixedUpdate()
-    {
-        Vector3 movementVector = Vector3.zero;
-
-        if (_inputSrevice.Axis.sqrMagnitude > float.Epsilon)
-        {
-            movementVector = camera.transform.TransformDirection(_inputSrevice.Axis);
-            movementVector.y = 0;
-            movementVector.Normalize();
-
-            transform.forward = movementVector;
-
-        }
-
-        movementVector += Physics.gravity;
-
-        _characterController.Move(_speed * movementVector * Time.deltaTime);
+        AnimatorHandler.animator = animator;
+        AnimatorHandler.characterController = _characterController;
     }
 }
