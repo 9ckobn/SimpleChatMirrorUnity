@@ -11,8 +11,6 @@ namespace Mirror
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-manager-hud")]
     public class NetworkManagerHUD : MonoBehaviour
     {
-        [SerializeField] private GameObject Bootstrap;
-
         NetworkManager manager;
 
         public int offsetX;
